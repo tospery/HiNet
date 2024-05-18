@@ -52,7 +52,7 @@ final public class IPManager {
                         observer.onNext(string)
                         observer.onCompleted()
                     } else {
-                        observer.onError(response.error ?? HiNetworkError.unknown)
+                        observer.onError(response.error ?? HiNetError.unknown)
                     }
                 }
             return Disposables.create { }

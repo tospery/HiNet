@@ -91,20 +91,20 @@ public extension NetworkingType {
 //                let id = (response as? (any Identifiable))?.id
 //                if id is String {
 //                    if (id as! String).isEmpty {
-//                        return .error(HiNetworkError.dataInvalid)
+//                        return .error(HiNetError.dataInvalid)
 //                    }
 //                }
 //                if id is Int {
 //                    if (id as! Int) == 0 {
-//                        return .error(HiNetworkError.dataInvalid)
+//                        return .error(HiNetError.dataInvalid)
 //                    }
 //                }
                 // YJX_TODO
 //                if !response.isValid {
-//                    return .error(HiNetworkError.dataInvalid)
+//                    return .error(HiNetError.dataInvalid)
 //                }
                 if (response as? (any Identifiable))?.id.hashValue ?? 0 == 0 {
-                    return .error(HiNetworkError.dataInvalid)
+                    return .error(HiNetError.dataInvalid)
                 }
                 return .just(response)
         }
@@ -114,7 +114,7 @@ public extension NetworkingType {
     func requestArray<Model: Mappable>(_ target: Target, type: Model.Type) -> Single<[Model]> {
         return self.request(target)
             .mapArray(Model.self)
-            .flatMap { $0.isEmpty ? .error(HiNetworkError.listIsEmpty) : .just($0) }
+            .flatMap { $0.isEmpty ? .error(HiNetError.listIsEmpty) : .just($0) }
             .observe(on: MainScheduler.instance)
     }
     
@@ -152,7 +152,7 @@ public extension NetworkingType {
                 let data = response.data(target)
                 guard let json = data as? [String: Any],
                       let model = Model.init(JSON: json) else {
-                    return .error(HiNetworkError.dataInvalid)
+                    return .error(HiNetError.dataInvalid)
                 }
                 return .just(model)
         }
@@ -167,11 +167,11 @@ public extension NetworkingType {
                     return .error(error)
                 }
                 guard let json = response.data(target) as? [[String: Any]] else {
-                    return .error(HiNetworkError.dataInvalid)
+                    return .error(HiNetError.dataInvalid)
                 }
                 let models = [Model].init(JSONArray: json)
                 if models.count == 0 {
-                    return .error(HiNetworkError.listIsEmpty)
+                    return .error(HiNetError.listIsEmpty)
                 }
                 return .just(models)
         }
@@ -187,17 +187,17 @@ public extension NetworkingType {
                 }
                 guard let json = response.data(target) as? [String: Any],
                       let list = List<Model>.init(JSON: json) else {
-                        return .error(HiNetworkError.dataInvalid)
+                        return .error(HiNetError.dataInvalid)
                 }
                 if list.items.count == 0 {
-                    return .error(HiNetworkError.listIsEmpty)
+                    return .error(HiNetError.listIsEmpty)
                 }
                 return .just(list)
         }
             .observe(on: MainScheduler.instance)
     }
     
-    private func check(_ code: Int, _ message: String?) -> HiNetworkError? {
+    private func check(_ code: Int, _ message: String?) -> HiNetError? {
         guard code == 200 else {
             if code == 401 {
                 return .userNotLoginedIn
@@ -205,7 +205,7 @@ public extension NetworkingType {
 //            if code == 403 {
 //                return .userLoginExpired
 //            }
-            return HiNetworkError.server(code, message, nil)
+            return HiNetError.server(code, message, nil)
         }
         return nil
     }

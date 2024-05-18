@@ -1,5 +1,5 @@
 //
-//  HiNetworkError.swift
+//  HiNetError.swift
 //  HiNetwork
 //
 //  Created by 杨建祥 on 2024/5/17.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum HiNetworkError: Error {
+public enum HiNetError: Error {
     case unknown
     case dataInvalid
     case listIsEmpty
