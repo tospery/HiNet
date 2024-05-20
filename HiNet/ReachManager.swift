@@ -24,7 +24,7 @@ final public class ReachManager {
         self.network?.stopListening()
     }
     
-    func start() {
+    public func start() {
         self.network?.startListening(onUpdatePerforming: { status in
             print("网络状态：\(status)")
             reachSubject.accept(status)
