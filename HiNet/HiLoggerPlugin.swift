@@ -11,10 +11,10 @@ import Moya
 /// Logs network activity (outgoing requests and incoming responses).
 public final class HiLoggerPlugin {
 
-    public var configuration: Current
+    public var configuration: Configuration
 
     /// Initializes a HiLoggerPlugin.
-    public init(configuration: Current = Current()) {
+    public init(configuration: Configuration = Configuration()) {
         self.configuration = configuration
     }
 }
@@ -116,9 +116,9 @@ private extension HiLoggerPlugin {
     }
 }
 
-// MARK: - Current
+// MARK: - Configuration
 public extension HiLoggerPlugin {
-    struct Current {
+    struct Configuration {
 
         // MARK: - Typealiases
         // swiftlint:disable nesting
@@ -131,7 +131,7 @@ public extension HiLoggerPlugin {
         public var output: OutputType
         public var logOptions: LogOptions
 
-        /// The designated way to instantiate a Current.
+        /// The designated way to instantiate a Configuration.
         ///
         /// - Parameters:
         ///   - formatter: An object holding all formatter closures available for customization.
@@ -156,7 +156,7 @@ public extension HiLoggerPlugin {
     }
 }
 
-public extension HiLoggerPlugin.Current {
+public extension HiLoggerPlugin.Configuration {
     struct LogOptions: OptionSet {
         public let rawValue: Int
         public init(rawValue: Int) { self.rawValue = rawValue }
@@ -188,7 +188,7 @@ public extension HiLoggerPlugin.Current {
     }
 }
 
-public extension HiLoggerPlugin.Current {
+public extension HiLoggerPlugin.Configuration {
     struct Formatter {
 
         // MARK: Typealiases
@@ -242,12 +242,12 @@ public extension HiLoggerPlugin.Current {
 public extension HiLoggerPlugin {
     /// Returns the default logger plugin
     class var `default`: HiLoggerPlugin {
-        return HiLoggerPlugin(configuration: Current(logOptions: .default))
+        return HiLoggerPlugin(configuration: Configuration(logOptions: .default))
     }
 
     /// Returns the default verbose logger plugin
     class var verbose: HiLoggerPlugin {
-        return HiLoggerPlugin(configuration: Current(logOptions: .verbose))
+        return HiLoggerPlugin(configuration: Configuration(logOptions: .verbose))
     }
 }
 
