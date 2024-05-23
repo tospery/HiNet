@@ -88,22 +88,10 @@ public extension NetworkingType {
         return self.request(target)
             .mapObject(Model.self)
             .flatMap { response -> Single<Model> in
-//                let id = (response as? (any Identifiable))?.id
-//                if id is String {
-//                    if (id as! String).isEmpty {
-//                        return .error(HiNetError.dataInvalid)
-//                    }
-//                }
-//                if id is Int {
-//                    if (id as! Int) == 0 {
-//                        return .error(HiNetError.dataInvalid)
-//                    }
-//                }
-                // YJX_TODO
-//                if !response.isValid {
-//                    return .error(HiNetError.dataInvalid)
-//                }
-                if (response as? (any Identifiable))?.id.hashValue ?? 0 == 0 {
+                if let int = (response as? (any Identifiable))?.id as? Int, int == 0 {
+                    return .error(HiNetError.dataInvalid)
+                }
+                if let string = (response as? (any Identifiable))?.id as? String, string.isEmpty {
                     return .error(HiNetError.dataInvalid)
                 }
                 return .just(response)
