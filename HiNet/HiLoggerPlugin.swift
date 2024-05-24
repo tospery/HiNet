@@ -95,12 +95,6 @@ private extension HiLoggerPlugin {
 		
         if (isFromError && configuration.logOptions.contains(.errorResponseBody))
             || configuration.logOptions.contains(.successResponseBody) {
-            // YJX_TODO
-            // let info = "(\(response.statusCode), \(response.request?.url?.pathString ?? ""))"
-            
-//            var pathString: String {
-//                self.absoluteString.removingPrefix(self.baseString).components(separatedBy: "?").first ?? ""
-//            }
             let info = "(\(response.statusCode), \(response.request?.url?.absoluteString ?? ""))"
             let json = configuration.formatter.responseData(response.data)
             output.append(configuration.formatter.entry("Response", "\n\(info)\n\(json)", target))

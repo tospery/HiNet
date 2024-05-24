@@ -67,7 +67,6 @@ public extension NetworkingType {
 
 public extension NetworkingType {
     func request(_ target: Target) -> Single<Moya.Response> {
-        // YJX_TODO
         self.provider.rx.request(target)
             // .catch { Single<Moya.Response>.error($0.asHiError) }
             .catch { Single<Moya.Response>.error($0) }
