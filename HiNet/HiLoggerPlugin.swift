@@ -103,7 +103,7 @@ private extension HiLoggerPlugin {
 //            }
             let info = "(\(response.statusCode), \(response.request?.url?.absoluteString ?? ""))"
             let json = configuration.formatter.responseData(response.data)
-            output.append(configuration.formatter.entry("Response", "\(info)\n\(json)", target))
+            output.append(configuration.formatter.entry("Response", "\n\(info)\n\(json)", target))
         }
 
         return output
