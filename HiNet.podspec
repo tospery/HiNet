@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'HiNet'
-  s.version          = '1.0.1'
+  s.version          = '1.0.2'
   s.summary          = 'Net function.'
   s.description      = <<-DESC
 						Net function using Swift.
