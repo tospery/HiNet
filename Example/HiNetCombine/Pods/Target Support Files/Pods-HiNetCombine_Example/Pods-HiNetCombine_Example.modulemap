@@ -1,0 +1,6 @@
+framework module Pods_HiNetCombine_Example {
+  umbrella header "Pods-HiNetCombine_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}
