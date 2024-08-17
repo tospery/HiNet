@@ -4,7 +4,7 @@ platform :ios, '16.0'
 use_frameworks!
 
 target 'HiNetCombine_Example' do
-  pod 'HiNet', :path => '../../'
+  pod 'HiNet/Combine', :path => '../../'
 
 end
 

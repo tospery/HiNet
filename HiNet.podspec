@@ -12,12 +12,26 @@ Pod::Spec.new do |s|
 
   s.requires_arc = true
   s.swift_version = '5.3'
-  s.ios.deployment_target = '13.0'
+  s.ios.deployment_target = '16.0'
   s.frameworks = 'Foundation'
   
-  s.source_files = 'HiNet/**/*'
-  s.dependency 'ObjectMapper', '~> 4.0'
-  s.dependency 'RxRelay', '~> 6.0'
-  s.dependency 'Moya/RxSwift', '~> 15.0'
+  s.subspec 'Core' do |ss|
+    ss.source_files = 'HiNet/Core/**/*'
+    ss.dependency 'ObjectMapper', '~> 4.0'
+  end
+  
+  s.subspec 'RxSwift' do |ss|
+    ss.source_files = 'HiNet/RxSwift/**/*'
+	ss.dependency 'HiNet/Core'
+	ss.dependency 'RxRelay', '~> 6.0'
+	ss.dependency 'Moya/RxSwift', '~> 15.0'
+  end
+  
+  s.subspec 'Combine' do |ss|
+    ss.source_files = 'HiNet/Combine/**/*'
+	ss.dependency 'HiNet/Core'
+	ss.dependency 'RxRelay', '~> 6.0'
+	ss.dependency 'Moya/RxSwift', '~> 15.0'
+  end
   
 end
