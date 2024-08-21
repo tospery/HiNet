@@ -53,10 +53,7 @@
         "HiNet/Core": [
 
         ],
-        "RxRelay": [
-          "~> 6.0"
-        ],
-        "Moya/RxSwift": [
+        "Moya/Combine": [
           "~> 15.0"
         ]
       }

@@ -30,8 +30,7 @@ Pod::Spec.new do |s|
   s.subspec 'Combine' do |ss|
     ss.source_files = 'HiNet/Combine/**/*'
 	ss.dependency 'HiNet/Core'
-	ss.dependency 'RxRelay', '~> 6.0'
-	ss.dependency 'Moya/RxSwift', '~> 15.0'
+	ss.dependency 'Moya/Combine', '~> 15.0'
   end
   
 end

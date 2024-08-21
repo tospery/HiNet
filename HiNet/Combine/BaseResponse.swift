@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import Moya
 import ObjectMapper
+import Moya
 
 public protocol ResponseType {
     var code: Int { get }

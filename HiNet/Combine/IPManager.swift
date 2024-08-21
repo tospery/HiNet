@@ -6,15 +6,15 @@
 //
 
 import Foundation
-import RxSwift
-import RxRelay
+import Combine
 import Alamofire
 
-public let ipSubject = BehaviorRelay<String?>.init(value: nil)
+public let ipSubject = CurrentValueSubject<String?, Never>(nil)
 
 final public class IPManager {
     
-    var disposeBag = DisposeBag()
+    private var subscription: AnyCancellable?
+    
     public static let shared = IPManager()
     
     init() {
@@ -25,38 +25,45 @@ final public class IPManager {
     }
     
     public func start() {
-        reachSubject.asObservable()
+        self.subscription = reachSubject
             .filter { $0 != .unknown }
             .flatMap { _ in self.request() }
-            .subscribe(onNext: { ip in
-                ipSubject.accept(ip)
-            }).disposed(by: self.disposeBag)
+            .sink { ip in
+                ipSubject.send(ip)
+            }
     }
     
-    func request() -> Observable<String> {
-        return self.request(urlString: "https://api.ipify.org").catch { [weak self] _ in
-            guard let `self` = self else { return .empty() }
-            return self.request(urlString: "https://api.myip.la")
-        }.do(onNext: { ip in
-            print("本机IP: \(ip)")
-        }, onError: { error in
-            print("本机IP: \(error)")
-        })
-    }
-    
-    func request(urlString: String) -> Observable<String> {
-        Observable<String>.create { observer in
-            AF.request(urlString, requestModifier: { $0.timeoutInterval = 2 })
-                .responseString { response in
-                    if let string = response.value, !string.isEmpty {
-                        observer.onNext(string)
-                        observer.onCompleted()
-                    } else {
-                        observer.onError(response.error ?? HiNetError.unknown)
-                    }
+    func request() -> AnyPublisher<String, Never> {
+        self.request(urlString: "https://api.ipify.org")
+            .catch { [weak self] _ -> AnyPublisher<String, Error> in
+                guard let self = self else { return Just("").setFailureType(to: Error.self).eraseToAnyPublisher() }
+                return self.request(urlString: "https://api.myip.la")
+            }
+            .handleEvents(receiveOutput: { ip in
+                print("本机IP: \(ip)")
+            }, receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    print("本机IP错误: \(error)")
                 }
-            return Disposables.create { }
+            })
+            .replaceError(with: "")
+            .eraseToAnyPublisher()
+    }
+    
+    func request(urlString: String) -> AnyPublisher<String, Error> {
+        Deferred {
+            Future<String, Error> { promise in
+                AF.request(urlString, requestModifier: { $0.timeoutInterval = 2 })
+                    .responseString { response in
+                        if let string = response.value, !string.isEmpty {
+                            promise(.success(string))
+                        } else {
+                            promise(.failure(response.error ?? HiNetError.unknown))
+                        }
+                    }
+            }
         }
+        .eraseToAnyPublisher()
     }
 
 }

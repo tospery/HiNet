@@ -1,8 +1,10 @@
 PODS:
   - Alamofire (5.9.1)
-  - HiNet/RxSwift (1.0.2):
-    - Moya/RxSwift (~> 15.0)
+  - HiNet/Core (1.0.2):
     - ObjectMapper (~> 4.0)
+  - HiNet/RxSwift (1.0.2):
+    - HiNet/Core
+    - Moya/RxSwift (~> 15.0)
     - RxRelay (~> 6.0)
   - Moya/Core (15.0.0):
     - Alamofire (~> 5.0)
@@ -31,12 +33,12 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   Alamofire: f36a35757af4587d8e4f4bfa223ad10be2422b8c
-  HiNet: 8ea49cfa53c9e0f494415737d7951c845c411869
+  HiNet: 84bc7fa11dc3e55513c4a27c6e48134cbaf12e36
   Moya: 138f0573e53411fb3dc17016add0b748dfbd78ee
   ObjectMapper: e6e4d91ff7f2861df7aecc536c92d8363f4c9677
   RxRelay: 4151ba01152436b08271e08410135e099880eae5
   RxSwift: b9a93a26031785159e11abd40d1a55bcb8057e52
 
-PODFILE CHECKSUM: 20332c3db765a89fa1787dfaeb6c883e28a3249c
+PODFILE CHECKSUM: 40386c2b4c7bffc2ef64de718a6afa70f7e2406d
 
 COCOAPODS: 1.14.3

@@ -6,14 +6,14 @@
 //
 
 import Foundation
-import Moya
-import RxSwift
+import Combine
 import ObjectMapper
+import Moya
 
 public protocol NetworkingType {
     associatedtype Target: TargetType
     var provider: MoyaProvider<Target> { get }
-    func request(_ target: Target) -> Single<Moya.Response>
+    func request(_ target: Target) -> AnyPublisher<Moya.Response, Error>
 }
 
 public extension NetworkingType {
@@ -66,13 +66,13 @@ public extension NetworkingType {
 }
 
 public extension NetworkingType {
-    func request(_ target: Target) -> Single<Moya.Response> {
+    func request(_ target: Target) -> AnyPublisher<Moya.Response, Error> {
         self.provider.rx.request(target)
             // .catch { Single<Moya.Response>.error($0.asHiError) }
             .catch { Single<Moya.Response>.error($0) }
     }
     
-    func requestRaw(_ target: Target) -> Single<Moya.Response> {
+    func requestRaw(_ target: Target) -> AnyPublisher<Moya.Response, Error> {
         return self.request(target)
             .observe(on: MainScheduler.instance)
     }
@@ -83,10 +83,10 @@ public extension NetworkingType {
             .observe(on: MainScheduler.instance)
     }
     
-    func requestObject<Model: Mappable>(_ target: Target, type: Model.Type) -> Single<Model> {
+    func requestObject<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<Model, Error> {
         return self.request(target)
             .mapObject(Model.self)
-            .flatMap { response -> Single<Model> in
+            .flatMap { response -> AnyPublisher<Model, Error> in
                 if let int = (response as? (any Identifiable))?.id as? Int, int == 0 {
                     return .error(HiNetError.dataInvalid)
                 }
@@ -98,17 +98,17 @@ public extension NetworkingType {
             .observe(on: MainScheduler.instance)
     }
     
-    func requestArray<Model: Mappable>(_ target: Target, type: Model.Type) -> Single<[Model]> {
+    func requestArray<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<[Model], Error> {
         return self.request(target)
             .mapArray(Model.self)
             .flatMap { $0.isEmpty ? .error(HiNetError.listIsEmpty) : .just($0) }
             .observe(on: MainScheduler.instance)
     }
     
-    func requestBase(_ target: Target) -> Single<BaseResponse> {
+    func requestBase(_ target: Target) -> AnyPublisher<BaseResponse, Error> {
         return self.request(target)
             .mapObject(BaseResponse.self)
-            .flatMap { response -> Single<BaseResponse> in
+            .flatMap { response -> AnyPublisher<BaseResponse, Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
                     return .error(error)
                 }
@@ -117,10 +117,10 @@ public extension NetworkingType {
             .observe(on: MainScheduler.instance)
     }
     
-    func requestData(_ target: Target) -> Single<Any?> {
+    func requestData(_ target: Target) -> AnyPublisher<Any?, Error> {
         return self.request(target)
             .mapObject(BaseResponse.self)
-            .flatMap { response -> Single<Any?> in
+            .flatMap { response -> AnyPublisher<Any?, Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
                     return .error(error)
                 }
@@ -129,10 +129,10 @@ public extension NetworkingType {
             .observe(on: MainScheduler.instance)
     }
     
-    func requestModel<Model: Mappable>(_ target: Target, type: Model.Type) -> Single<Model> {
+    func requestModel<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<Model, Error> {
         return self.request(target)
             .mapObject(BaseResponse.self)
-            .flatMap { response -> Single<Model> in
+            .flatMap { response -> AnyPublisher<Model, Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
                     return .error(error)
                 }
@@ -146,10 +146,10 @@ public extension NetworkingType {
             .observe(on: MainScheduler.instance)
     }
     
-    func requestModels<Model: Mappable>(_ target: Target, type: Model.Type) -> Single<[Model]> {
+    func requestModels<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<[Model], Error> {
         return self.request(target)
             .mapObject(BaseResponse.self)
-            .flatMap { response -> Single<[Model]> in
+            .flatMap { response -> AnyPublisher<[Model], Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
                     return .error(error)
                 }
@@ -165,10 +165,10 @@ public extension NetworkingType {
             .observe(on: MainScheduler.instance)
     }
     
-    func requestList<Model: Mappable>(_ target: Target, type: Model.Type) -> Single<List<Model>> {
+    func requestList<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<List<Model>, Error> {
         return self.request(target)
             .mapObject(BaseResponse.self)
-            .flatMap { response -> Single<List<Model>> in
+            .flatMap { response -> AnyPublisher<List<Model>, Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
                     return .error(error)
                 }

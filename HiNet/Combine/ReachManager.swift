@@ -6,12 +6,11 @@
 //
 
 import Foundation
-import RxSwift
-import RxRelay
+import Combine
 import Alamofire
  
-public let reachSubject = BehaviorRelay<NetworkReachabilityManager.NetworkReachabilityStatus>.init(value: .unknown)
- 
+public let reachSubject = CurrentValueSubject<NetworkReachabilityManager.NetworkReachabilityStatus, Never>(.unknown)
+
 final public class ReachManager {
     
     let network = NetworkReachabilityManager.default
@@ -27,7 +26,7 @@ final public class ReachManager {
     public func start() {
         self.network?.startListening(onUpdatePerforming: { status in
             print("网络状态：\(status)")
-            reachSubject.accept(status)
+            reachSubject.send(status)
         })
     }
 
@@ -46,7 +45,7 @@ extension NetworkReachabilityManager.NetworkReachabilityStatus: CustomStringConv
     public var description: String {
         switch self {
         case .unknown:
-            return NSLocalizedString("Network.Reach.Unknow", value: "", comment: "") // 未知网络
+            return NSLocalizedString("Network.Reach.Unknown", value: "", comment: "") // 未知网络
         case .notReachable:
             return NSLocalizedString("Network.Reach.NotReachable", value: "", comment: "") // 网络不可达
         case let .reachable(type):

@@ -17,24 +17,26 @@
   },
   "requires_arc": true,
   "swift_versions": "5.3",
-  "frameworks": "Foundation",
   "platforms": {
-    "osx": null,
-    "ios": null,
-    "tvos": null,
-    "visionos": null,
-    "watchos": null
+    "ios": "16.0"
   },
+  "frameworks": "Foundation",
   "subspecs": [
     {
-      "name": "RxSwift",
-      "platforms": {
-        "ios": "13.0"
-      },
-      "source_files": "HiNet/RxSwift/**/*",
+      "name": "Core",
+      "source_files": "HiNet/Core/**/*",
       "dependencies": {
         "ObjectMapper": [
           "~> 4.0"
+        ]
+      }
+    },
+    {
+      "name": "RxSwift",
+      "source_files": "HiNet/RxSwift/**/*",
+      "dependencies": {
+        "HiNet/Core": [
+
         ],
         "RxRelay": [
           "~> 6.0"
@@ -46,18 +48,12 @@
     },
     {
       "name": "Combine",
-      "platforms": {
-        "ios": "16.0"
-      },
       "source_files": "HiNet/Combine/**/*",
       "dependencies": {
-        "ObjectMapper": [
-          "~> 4.0"
+        "HiNet/Core": [
+
         ],
-        "RxRelay": [
-          "~> 6.0"
-        ],
-        "Moya/RxSwift": [
+        "Moya/Combine": [
           "~> 15.0"
         ]
       }
