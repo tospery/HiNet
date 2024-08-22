@@ -67,121 +67,137 @@ public extension NetworkingType {
 
 public extension NetworkingType {
     func request(_ target: Target) -> AnyPublisher<Moya.Response, Error> {
-        self.provider.rx.request(target)
-            // .catch { Single<Moya.Response>.error($0.asHiError) }
-            .catch { Single<Moya.Response>.error($0) }
+        self.provider.requestPublisher(target)
+            .mapError { $0 as Error }
+            .eraseToAnyPublisher()
     }
     
     func requestRaw(_ target: Target) -> AnyPublisher<Moya.Response, Error> {
-        return self.request(target)
-            .observe(on: MainScheduler.instance)
+        self.request(target)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
-    func requestJSON(_ target: Target) -> Single<Any> {
-        return self.request(target)
-            .mapJSON()
-            .observe(on: MainScheduler.instance)
+    func requestJSON(_ target: Target) -> AnyPublisher<Any, Error> {
+        self.request(target)
+            .mapError { $0 as! MoyaError }
+            .eraseToAnyPublisher()
+            .mapJSON(failsOnEmptyData: true)
+            .mapError { $0 as Error }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     func requestObject<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<Model, Error> {
-        return self.request(target)
+        self.request(target)
             .mapObject(Model.self)
             .flatMap { response -> AnyPublisher<Model, Error> in
                 if let int = (response as? (any Identifiable))?.id as? Int, int == 0 {
-                    return .error(HiNetError.dataInvalid)
+                    return Fail(error: HiNetError.dataInvalid).eraseToAnyPublisher()
                 }
                 if let string = (response as? (any Identifiable))?.id as? String, string.isEmpty {
-                    return .error(HiNetError.dataInvalid)
+                    return Fail(error: HiNetError.dataInvalid).eraseToAnyPublisher()
                 }
-                return .just(response)
-        }
-            .observe(on: MainScheduler.instance)
+                return Just(response).setFailureType(to: Error.self).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     func requestArray<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<[Model], Error> {
-        return self.request(target)
+        self.request(target)
             .mapArray(Model.self)
-            .flatMap { $0.isEmpty ? .error(HiNetError.listIsEmpty) : .just($0) }
-            .observe(on: MainScheduler.instance)
+            .flatMap {
+                $0.isEmpty ? 
+                Fail(error: HiNetError.listIsEmpty).eraseToAnyPublisher() :
+                Just($0).setFailureType(to: Error.self).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     func requestBase(_ target: Target) -> AnyPublisher<BaseResponse, Error> {
-        return self.request(target)
+        self.request(target)
             .mapObject(BaseResponse.self)
             .flatMap { response -> AnyPublisher<BaseResponse, Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
-                    return .error(error)
+                    return Fail(error: error).eraseToAnyPublisher()
                 }
-                return .just(response)
-        }
-            .observe(on: MainScheduler.instance)
+                return Just(response).setFailureType(to: Error.self).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     func requestData(_ target: Target) -> AnyPublisher<Any?, Error> {
-        return self.request(target)
+        self.request(target)
             .mapObject(BaseResponse.self)
             .flatMap { response -> AnyPublisher<Any?, Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
-                    return .error(error)
+                    return Fail(error: error).eraseToAnyPublisher()
                 }
-                return .just(response.data(target))
-        }
-            .observe(on: MainScheduler.instance)
+                return Just(response.data(target)).setFailureType(to: Error.self).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     func requestModel<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<Model, Error> {
-        return self.request(target)
+        self.request(target)
             .mapObject(BaseResponse.self)
             .flatMap { response -> AnyPublisher<Model, Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
-                    return .error(error)
+                    return Fail(error: error).eraseToAnyPublisher()
                 }
                 let data = response.data(target)
                 guard let json = data as? [String: Any],
                       let model = Model.init(JSON: json) else {
-                    return .error(HiNetError.dataInvalid)
+                    return Fail(error: HiNetError.dataInvalid).eraseToAnyPublisher()
                 }
-                return .just(model)
-        }
-            .observe(on: MainScheduler.instance)
+                return Just(model).setFailureType(to: Error.self).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     func requestModels<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<[Model], Error> {
-        return self.request(target)
+        self.request(target)
             .mapObject(BaseResponse.self)
             .flatMap { response -> AnyPublisher<[Model], Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
-                    return .error(error)
+                    return Fail(error: error).eraseToAnyPublisher()
                 }
                 guard let json = response.data(target) as? [[String: Any]] else {
-                    return .error(HiNetError.dataInvalid)
+                    return Fail(error: HiNetError.dataInvalid).eraseToAnyPublisher()
                 }
                 let models = [Model].init(JSONArray: json)
                 if models.count == 0 {
-                    return .error(HiNetError.listIsEmpty)
+                    return Fail(error: HiNetError.listIsEmpty).eraseToAnyPublisher()
                 }
-                return .just(models)
-        }
-            .observe(on: MainScheduler.instance)
+                return Just(models).setFailureType(to: Error.self).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     func requestList<Model: Mappable>(_ target: Target, type: Model.Type) -> AnyPublisher<List<Model>, Error> {
-        return self.request(target)
+        self.request(target)
             .mapObject(BaseResponse.self)
             .flatMap { response -> AnyPublisher<List<Model>, Error> in
                 if let error = self.check(response.code(target), response.message(target)) {
-                    return .error(error)
+                    return Fail(error: error).eraseToAnyPublisher()
                 }
                 guard let json = response.data(target) as? [String: Any],
                       let list = List<Model>.init(JSON: json) else {
-                        return .error(HiNetError.dataInvalid)
+                    return Fail(error: HiNetError.dataInvalid).eraseToAnyPublisher()
                 }
                 if list.items.count == 0 {
-                    return .error(HiNetError.listIsEmpty)
+                    return Fail(error: HiNetError.listIsEmpty).eraseToAnyPublisher()
                 }
-                return .just(list)
-        }
-            .observe(on: MainScheduler.instance)
+                return Just(list).setFailureType(to: Error.self).eraseToAnyPublisher()
+            }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
     }
     
     private func check(_ code: Int, _ message: String?) -> HiNetError? {
