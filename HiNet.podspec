@@ -17,7 +17,8 @@ Pod::Spec.new do |s|
   
   s.subspec 'Core' do |ss|
     ss.source_files = 'HiNet/Core/**/*'
-    ss.dependency 'ObjectMapper', '~> 4.0'
+	ss.dependency 'ObjectMapper', '~> 4.0'
+    ss.dependency 'Moya/Core', '~> 15.0'
   end
   
   s.subspec 'RxSwift' do |ss|
