@@ -10,13 +10,13 @@ import Combine
 import ObjectMapper
 import Moya
 
-public protocol NetworkingType {
+public protocol NetworkPublishType {
     associatedtype Target: TargetType
     var provider: MoyaProvider<Target> { get }
     func request(_ target: Target) -> AnyPublisher<Moya.Response, Error>
 }
 
-public extension NetworkingType {
+public extension NetworkPublishType {
     static var endpointClosure: MoyaProvider<Target>.EndpointClosure {
         return { target in
             return MoyaProvider.defaultEndpointMapping(for: target)
@@ -65,7 +65,7 @@ public extension NetworkingType {
 
 }
 
-public extension NetworkingType {
+public extension NetworkPublishType {
     func request(_ target: Target) -> AnyPublisher<Moya.Response, Error> {
         self.provider.requestPublisher(target)
             .mapError { $0 as Error }

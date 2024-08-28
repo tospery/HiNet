@@ -12,10 +12,10 @@ import Alamofire
 
 public let ipSubject = BehaviorRelay<String?>.init(value: nil)
 
-final public class IPManager {
+final public class IPSubjector {
     
     var disposeBag = DisposeBag()
-    public static let shared = IPManager()
+    public static let shared = IPSubjector()
     
     init() {
         

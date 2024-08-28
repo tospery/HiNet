@@ -9,13 +9,13 @@ import Foundation
 import Combine
 import Alamofire
 
-public let ipSubject = CurrentValueSubject<String?, Never>(nil)
+public let ipPublisher = CurrentValueSubject<String?, Never>(nil)
 
-final public class IPManager {
+final public class IPPublisher {
     
     private var subscription: AnyCancellable?
     
-    public static let shared = IPManager()
+    public static let shared = IPPublisher()
     
     init() {
         
@@ -25,11 +25,11 @@ final public class IPManager {
     }
     
     public func start() {
-        self.subscription = reachSubject
+        self.subscription = reachPublisher
             .filter { $0 != .unknown }
             .flatMap { _ in self.request() }
             .sink { ip in
-                ipSubject.send(ip)
+                ipPublisher.send(ip)
             }
     }
     

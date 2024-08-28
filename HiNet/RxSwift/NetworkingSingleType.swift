@@ -10,13 +10,13 @@ import Moya
 import RxSwift
 import ObjectMapper
 
-public protocol NetworkingType {
+public protocol NetworkingSingleType {
     associatedtype Target: TargetType
     var provider: MoyaProvider<Target> { get }
     func request(_ target: Target) -> Single<Moya.Response>
 }
 
-public extension NetworkingType {
+public extension NetworkingSingleType {
     static var endpointClosure: MoyaProvider<Target>.EndpointClosure {
         return { target in
             return MoyaProvider.defaultEndpointMapping(for: target)
@@ -65,7 +65,7 @@ public extension NetworkingType {
 
 }
 
-public extension NetworkingType {
+public extension NetworkingSingleType {
     func request(_ target: Target) -> Single<Moya.Response> {
         self.provider.rx.request(target)
             // .catch { Single<Moya.Response>.error($0.asHiError) }

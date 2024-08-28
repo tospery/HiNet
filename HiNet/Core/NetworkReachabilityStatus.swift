@@ -1,37 +1,12 @@
 //
-//  ReachManager.swift
+//  NetworkReachabilityStatus.swift
 //  HiNet
 //
-//  Created by liaoya on 2022/7/19.
+//  Created by 杨建祥 on 2024/8/29.
 //
 
 import Foundation
-import RxSwift
-import RxRelay
 import Alamofire
- 
-public let reachSubject = BehaviorRelay<NetworkReachabilityManager.NetworkReachabilityStatus>.init(value: .unknown)
- 
-final public class ReachManager {
-    
-    let network = NetworkReachabilityManager.default
-    public static let shared = ReachManager()
-
-    init() {
-    }
-    
-    deinit {
-        self.network?.stopListening()
-    }
-    
-    public func start() {
-        self.network?.startListening(onUpdatePerforming: { status in
-            print("网络状态：\(status)")
-            reachSubject.accept(status)
-        })
-    }
-
-}
 
 extension NetworkReachabilityManager.NetworkReachabilityStatus {
     
