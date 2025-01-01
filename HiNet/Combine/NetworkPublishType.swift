@@ -109,7 +109,7 @@ public extension NetworkPublishType {
             .mapArray(Model.self)
             .flatMap {
                 $0.isEmpty ? 
-                Fail(error: HiNetError.listIsEmpty).eraseToAnyPublisher() :
+                Fail(error: HiNetError.dataIsEmpty).eraseToAnyPublisher() :
                 Just($0).setFailureType(to: Error.self).eraseToAnyPublisher()
             }
             .receive(on: DispatchQueue.main)
@@ -172,7 +172,7 @@ public extension NetworkPublishType {
                 }
                 let models = [Model].init(JSONArray: json)
                 if models.count == 0 {
-                    return Fail(error: HiNetError.listIsEmpty).eraseToAnyPublisher()
+                    return Fail(error: HiNetError.dataIsEmpty).eraseToAnyPublisher()
                 }
                 return Just(models).setFailureType(to: Error.self).eraseToAnyPublisher()
             }
@@ -192,7 +192,7 @@ public extension NetworkPublishType {
                     return Fail(error: HiNetError.dataInvalid).eraseToAnyPublisher()
                 }
                 if list.items.count == 0 {
-                    return Fail(error: HiNetError.listIsEmpty).eraseToAnyPublisher()
+                    return Fail(error: HiNetError.dataIsEmpty).eraseToAnyPublisher()
                 }
                 return Just(list).setFailureType(to: Error.self).eraseToAnyPublisher()
             }

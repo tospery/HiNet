@@ -10,7 +10,7 @@ import Foundation
 public enum HiNetError: Error {
     case unknown
     case dataInvalid
-    case listIsEmpty
+    case dataIsEmpty
 //    case networkNotConnected
 //    case networkNotReachable
     case userNotLoginedIn   // 对应HTTP的401
