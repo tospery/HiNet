@@ -1,9 +1,9 @@
 Pod::Spec.new do |s|
   s.name             = 'HiNet'
-  s.version          = '1.0.4'
-  s.summary          = 'Net function.'
+  s.version          = '1.0.5'
+  s.summary          = 'Net module.'
   s.description      = <<-DESC
-						Net function using Swift.
+						Net module using Swift.
                        DESC
   s.homepage         = 'https://github.com/tospery/HiNet'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }

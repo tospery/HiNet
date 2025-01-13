@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6459C373B3082433712DAFD6ACBA50FD"
-               BuildableName = "Pods_HiNetDemo_Example.framework"
-               BlueprintName = "Pods-HiNetDemo_Example"
+               BlueprintIdentifier = "39101A2B1096DFB129FCDE5490875054"
+               BuildableName = "RxRelay_Privacy.bundle"
+               BlueprintName = "RxRelay-RxRelay_Privacy"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

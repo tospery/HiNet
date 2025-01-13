@@ -101,7 +101,7 @@ public extension NetworkingSingleType {
     func requestArray<Model: Mappable>(_ target: Target, type: Model.Type) -> Single<[Model]> {
         return self.request(target)
             .mapArray(Model.self)
-            .flatMap { $0.isEmpty ? .error(HiNetError.listIsEmpty) : .just($0) }
+            .flatMap { $0.isEmpty ? .error(HiNetError.dataIsEmpty) : .just($0) }
             .observe(on: MainScheduler.instance)
     }
     
@@ -158,7 +158,7 @@ public extension NetworkingSingleType {
                 }
                 let models = [Model].init(JSONArray: json)
                 if models.count == 0 {
-                    return .error(HiNetError.listIsEmpty)
+                    return .error(HiNetError.dataIsEmpty)
                 }
                 return .just(models)
         }
@@ -177,7 +177,7 @@ public extension NetworkingSingleType {
                         return .error(HiNetError.dataInvalid)
                 }
                 if list.items.count == 0 {
-                    return .error(HiNetError.listIsEmpty)
+                    return .error(HiNetError.dataIsEmpty)
                 }
                 return .just(list)
         }
