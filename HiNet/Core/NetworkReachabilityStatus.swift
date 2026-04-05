@@ -17,7 +17,7 @@ extension NetworkReachabilityManager.NetworkReachabilityStatus {
 }
 
 
-extension NetworkReachabilityManager.NetworkReachabilityStatus: CustomStringConvertible {
+extension NetworkReachabilityManager.NetworkReachabilityStatus: @retroactive CustomStringConvertible {
     public var description: String {
         switch self {
         case .unknown:
