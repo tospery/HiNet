@@ -7,7 +7,7 @@
 
 import Foundation
 import Moya
-import ObjectMapper
+import HiMapper
 
 public protocol ResponseType {
     var code: Int { get }

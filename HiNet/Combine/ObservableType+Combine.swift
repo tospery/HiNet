@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-import ObjectMapper
+import HiMapper
 import Moya
 
 public extension Publisher where Output == Response, Failure == Error {

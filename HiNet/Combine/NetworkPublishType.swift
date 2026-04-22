@@ -7,7 +7,7 @@
 
 import Foundation
 import Combine
-import ObjectMapper
+import HiMapper
 import Moya
 
 public protocol NetworkPublishType {

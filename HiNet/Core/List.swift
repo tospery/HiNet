@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import ObjectMapper
+import HiMapper
 
 public protocol ListCompatible {
     func hasNext(map: Map) -> Bool
