@@ -8,7 +8,7 @@
 import Foundation
 import Moya
 import RxSwift
-import ObjectMapper
+import HiMapper
 
 public protocol NetworkingSingleType {
     associatedtype Target: TargetType
